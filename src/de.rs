@@ -59,13 +59,17 @@ where
 {
     type Error = Error;
 
-    fn deserialize_any<V>(self, _visitor: V) -> Result<V::Value>
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
     where
         V: Visitor<'de>,
     {
-        // The bin_prot format is not self describing so return an error
-        // here.
-        Err(Error::CannotDeserializeAny)
+        let mut bytes = <[u8; 32]>::default();
+
+        let len = std::mem::size_of::<V::Value>();
+        let bytes = &mut bytes[..len];
+
+        self.read.read_exact(bytes)?;
+        visitor.visit_bytes(bytes)
     }
 
     fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value>
