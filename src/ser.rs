@@ -147,7 +147,7 @@ where
     }
 
     fn serialize_bytes(self, v: &[u8]) -> Result<()> {
-        self.serialize_nat0(v.len() as u64)?;
+        // self.serialize_nat0(v.len() as u64)?; // Allow to serialize BigInt
         self.writer.write_all(v)?;
         Ok(())
     }
